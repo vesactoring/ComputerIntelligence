@@ -1,4 +1,15 @@
 import numpy as np
+import matplotlib.pyplot as plt
+
+features = [[0, 0], [1, 0], [0, 1], [1, 1]]
+label_and = [0, 0, 0, 1]
+label_or = [0, 1, 1, 1]
+label_xor = [0, 1, 1, 0]
+
+weights = [1, 1]
+threshold = 0.5
+learning_rate = 0.1
+
 
 def sum(data, weights):
     x0 = data[0]
@@ -44,12 +55,22 @@ def error(predicts, labels):
     return np.sum(np.square(labels- predicts)) / len(predict) 
 
 
-features = [[0, 0], [1, 0], [0, 1], [1, 1]]
-label_and = [0, 0, 0, 1]
-label_or = [0, 1, 1, 1]
-label_xor = [0, 1, 1, 0]
+def plot(max_epoch, labels):
+    errors = []
+    epoches = np.linspace(0, 1, max_epoch)
 
-weights = [1, 1]
-threshold = 0.5
-learning_rate = 0.1
+    for i in max_epoch:
+        weights = training(i, features, weights, threshold, labels, learning_rate)
+        e = error(predict(features, weights, threshold), labels)
+        errors.append(e)
+
+    _, axis = plt.subplots()
+    axis.plot(epoches, errors)
+    
+    axis.legend()
+    axis.set_xlabel('epoch')
+    axis.set_ylabel('errors')
+    plt.title('errors for different epoch')
+    plt.grid()
+    plt.show()
 
