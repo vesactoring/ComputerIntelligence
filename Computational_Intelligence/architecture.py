@@ -26,10 +26,5 @@ class Architecture:
             params_values['b' + str(layer_idx)] = np.random.randn(outputLayerSize, 1) # For now the bias is set to 1
         
         return params_values
-nn_architecture = [
-    {"input_dim": 10, "activation": "sigmoid"},
-    {"input_dim": 9, "activation": "sigmoid"},
-    {"input_dim": 8, "activation": "sigmoid"},
-]
 
     
