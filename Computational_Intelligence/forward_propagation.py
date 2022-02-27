@@ -6,15 +6,19 @@ def forwardOneLayer(prevA, currW, currB) :
         
     return activ.activationFunction(currZ), currZ
 
+abc = 0
+
 def forwardAllLayers(X, paramValues, neuralNetWorkArchitecture):
     memory = {}
     A_curr = X
+    global abc
+    print(abc)
+    abc+=1
     
     for idx, layer in enumerate(neuralNetWorkArchitecture):
         layer_idx = idx + 1
         A_prev = A_curr
         
-        print(layer)
         activ_function_curr = layer["activation"]
         W_curr = paramValues["W" + str(layer_idx)]
         b_curr = paramValues["b" + str(layer_idx)]

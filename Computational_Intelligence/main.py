@@ -24,9 +24,19 @@ p1.addLayer(10, 9, "sigmoid")
 p1.addLayer(9, 8, "sigmoid") 
 p1.addLayer(8, 7,  "sigmoid")
 
+x = [] 
+
 def testForward():
     param_values = p1.init_layers()
-    for i in format.readFeatures("./data/features.txt"):
-        print(fp.forwardAllLayers(i, param_values, p1.getArchitecture()))
+    i = format.readFeatures("./data/features.txt")[0]
+    print(type(i))
+    # for i in format.readFeatures("./data/features.txt"):
+    #     if ()
+    #     try:
+    print(fp.forwardAllLayers(i, param_values, p1.getArchitecture()))
+    #     except:
+    #         print("This is the string " + i)
+    # return x
 
 testForward()
+print("success")
