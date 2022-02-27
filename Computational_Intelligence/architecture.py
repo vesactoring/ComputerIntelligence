@@ -23,7 +23,7 @@ class Architecture:
             outputLayerSize = layer["outputDimension"]
         
             params_values['W' + str(layer_idx)] = np.random.randn(outputLayerSize, layer_input_size) * 0.1
-            params_values['b' + str(layer_idx)] = np.random.randn(outputLayerSize, 1) # For now the bias is set to 1
+            params_values['b' + str(layer_idx)] = 1 # For now the bias is set to 1
         
         return params_values
 

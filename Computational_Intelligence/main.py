@@ -28,8 +28,8 @@ x = []
 
 def testForward():
     param_values = p1.init_layers()
-    i = format.readFeatures("./data/features.txt")[0]
-    print(type(i))
+    i = format.readFeatures("./data/features.txt")[1]
+    print(i)
     # for i in format.readFeatures("./data/features.txt"):
     #     if ()
     #     try:

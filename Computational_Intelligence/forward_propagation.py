@@ -6,14 +6,9 @@ def forwardOneLayer(prevA, currW, currB) :
         
     return activ.activationFunction(currZ), currZ
 
-abc = 0
-
 def forwardAllLayers(X, paramValues, neuralNetWorkArchitecture):
     memory = {}
     A_curr = X
-    global abc
-    print(abc)
-    abc+=1
     
     for idx, layer in enumerate(neuralNetWorkArchitecture):
         layer_idx = idx + 1
