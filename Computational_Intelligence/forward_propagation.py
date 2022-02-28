@@ -23,7 +23,7 @@ class Network(object):
             a = self.sigmoid(array)
         return a
 
-    def fit(self, training_data, epochs, mini_batch_size, eta):
+    def fit(self, training_data, target, epochs, mini_batch_size, eta):
         """Train the neural network using mini-batch stochastic
         gradient descent.  The ``training_data`` is a list of tuples
         ``(x, y)`` representing the training inputs and the desired
@@ -34,24 +34,26 @@ class Network(object):
         tracking progress, but slows things down substantially."""
         n = len(training_data)
         for j in range(epochs):
-            mini_batches = np.array.split(training_data, n/mini_batch_size)
-            for mini_batch in mini_batches:
-                self.update_mini_batch(mini_batch, eta)
+            mini_batches_data = np.array_split(training_data, n/mini_batch_size)
+            mini_batches_y = np.array_split(target, n/mini_batch_size)
+            for mini_batch in mini_batches_data:
+                self.update_mini_batch(mini_batches_data, mini_batches_y, eta)
 
-    def update_mini_batch(self, mini_batch, eta):
+    def update_mini_batch(self, mini_batch_data, mini_batches_y, eta):
         """Update the network's weights and biases by applying
         gradient descent using backpropagation to a single mini batch.
         The ``mini_batch`` is a list of tuples ``(x, y)``, and ``eta``
         is the learning rate."""
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
-        for x, y in mini_batch:
-            delta_nabla_b, delta_nabla_w = self.backprop(x, y)
-            nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
-            nabla_w = [nw+dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
-        self.weights = [w-(eta/len(mini_batch))*nw
+        for x in mini_batch_data:
+            for y in mini_batches_y:
+                delta_nabla_b, delta_nabla_w = self.backprop(x, y)
+                nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
+                nabla_w = [nw+dnw for nw, dnw in zip(nabla_w, delta_nabla_w)] 
+        self.weights = [w-(eta/len(mini_batch_data))*nw
                         for w, nw in zip(self.weights, nabla_w)]
-        self.biases = [b-(eta/len(mini_batch))*nb
+        self.biases = [b-(eta/len(mini_batch_data))*nb
                        for b, nb in zip(self.biases, nabla_b)]
 
     def backprop(self, x, y):
@@ -110,7 +112,8 @@ Networks_sample = Network([10, 9, 8 ,7])
 #     print(i, " value", np.shape(value))
 
 data_features = np.genfromtxt("data/features.txt", delimiter=",")
+data_targets = np.genfromtxt("data/targets.txt", delimiter=",")
 example = data_features[0]
 print("EXAMPLE, ", example)
 print("RESULT,", Networks_sample.feedforward(example))
-Networks_sample.fit(data_features)
+Networks_sample.fit(data_features, data_targets, 200, 200, 0.01)
