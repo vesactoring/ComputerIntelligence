@@ -79,11 +79,12 @@ class Network(object):
         zs = [] # list to store all the z vectors, layer by layer
         # print(np.shape(x))
         # print(np.shape(x.T))
-        
+        print(np.shape(activations[0]))
         activations[0] = activations[0].T
+        print("djksbk")
         print(np.shape(activations[0]))
         for index, (b, w) in enumerate(zip(self.biases, self.weights)):
-            z = np.dot(w, activation)+b
+            z = np.dot(w, activation[0])+b
             zs.append(z)
             if(index == self.num_layers):
                 activation = self.softmax(z)
