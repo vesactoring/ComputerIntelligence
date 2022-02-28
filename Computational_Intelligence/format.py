@@ -8,7 +8,7 @@ def readFeatures(path):
     breakClusterLayer = clusterLayer
     for x in range(0, len(clusterLayer)):
         temp = np.array(clusterLayer[x].split(','))
-        if temp.size == 1:
+        if temp.size < 9:
             # Since numpy can't comprehend the empty string
             # i.e: [""]
             # so the formatter have to have a if to detect this empty string
