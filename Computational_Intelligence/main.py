@@ -31,6 +31,7 @@ if __name__ == '__main__':
     # example = data_features[0]
     # print("EXAMPLE, ", example)
     # print("RESULT,", Networks_sample.feedforward(example))
-    Networks_sample.fit(training_data_features, training_data_labels, 10, largest_prime_factor(len(training_data_features)), 0.01)
-
-    
+    # print(Networks_sample.evaluate(test_data_features, test_data_labels))
+    Networks_sample.fit(training_data_features, training_data_labels, 10, largest_prime_factor(len(training_data_features)), 0.01)    
+    # print(np.shape(test_data_features))
+    print(Networks_sample.evaluate(test_data_features, test_data_labels))
