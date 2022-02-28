@@ -113,16 +113,3 @@ class Network(object):
         """Return the vector of partial derivatives \partial C_x /
         \partial a for the output activations."""
         return (output_activations-y)
-
-    
-
-Networks_sample = Network([10, 9, 8 ,7])
-# for i, value in enumerate(Networks_sample.weights):
-#     print(i, " value", np.shape(value))
-
-data_features = np.genfromtxt("data/features.txt", delimiter=",")
-data_targets = np.genfromtxt("data/targets.txt", delimiter=",")
-# example = data_features[0]
-# print("EXAMPLE, ", example)
-# print("RESULT,", Networks_sample.feedforward(example))
-Networks_sample.fit(data_features, data_targets, 10, 187, 0.01)
