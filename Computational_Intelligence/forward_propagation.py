@@ -75,14 +75,13 @@ class Network(object):
         nabla_w = [np.zeros(w.shape) for w in self.weights]
         # feedforward
         activation = x
-        activation = activation.T
         activations = [x] # list to store all the activations, layer by layer
         zs = [] # list to store all the z vectors, layer by layer
-        print(np.shape(x))
-        print(np.shape(x.T))
+        # print(np.shape(x))
+        # print(np.shape(x.T))
         
         activations[0] = activations[0].T
-
+        print(np.shape(activations[0]))
         for index, (b, w) in enumerate(zip(self.biases, self.weights)):
             z = np.dot(w, activation)+b
             zs.append(z)
