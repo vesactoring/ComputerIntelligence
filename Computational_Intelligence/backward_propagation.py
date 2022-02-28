@@ -3,7 +3,7 @@ import activation as activ
 
 #useless currB?
 def backwardOneLayer(currdA, currW, currB, currZ, prevA):
-    n = prevA.shape[1]
+    n = prevA.shape[0]
 
     sg = activ.activationFunction(currZ)
 
@@ -14,10 +14,10 @@ def backwardOneLayer(currdA, currW, currB, currZ, prevA):
 
     return prevdA, dW, dB
 
-def backwardAllLayers(Y_Hat, Y, memory, paramValues, neuralNetWorkArchitecture):
+def backwardAllLayers(Y_Hat, Y, memory, paramValues, neuralNetWorkArchitecturnp.reshape((np.array(pdata),(150,1)), int(number))e):
     gradients = {}
     #n = Y.shape[1]
-    Y = Y.reshape(Y_Hat.shape)
+    # Y = Y.reshape(Y_Hat.shape)
 
     prevdA = - ((Y / Y_Hat) - ((1 - Y) / (1 - Y_Hat)))
 
