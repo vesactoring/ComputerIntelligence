@@ -9,9 +9,12 @@ class Network(object):
         self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
         self.weights = [np.random.randn(y, x) 
                         for x, y in zip(sizes[:-1], sizes[1:])]
-    
     def sigmoid(self, z):
         return 1.0/(1.0+np.exp(-z))
+    
+    def softmax(self, z):
+        eZi = np.exp(z - np.max(z))
+        return eZi / eZi.sum()
 
     def sigmoid_prime(self, z):
         return self.sigmoid(z)*(1-self.sigmoid(z))
@@ -46,16 +49,16 @@ class Network(object):
         is the learning rate."""
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
-        for x in mini_batch_data:
-            for y in mini_batches_y:
-                delta_nabla_b, delta_nabla_w = self.backprop(x, y)
-                nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
-                nabla_w = [nw+dnw for nw, dnw in zip(nabla_w, delta_nabla_w)] 
+        for i, x in enumerate(mini_batch_data):
+            delta_nabla_b, delta_nabla_w = self.backprop(x, mini_batches_y[i])
+            nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
+            nabla_w = [nw+dnw for nw, dnw in zip(nabla_w, delta_nabla_w)] 
         self.weights = [w-(eta/len(mini_batch_data))*nw
                         for w, nw in zip(self.weights, nabla_w)]
         self.biases = [b-(eta/len(mini_batch_data))*nb
                        for b, nb in zip(self.biases, nabla_b)]
 
+    # x: mini batch datas with feataures, y: mini batch datas with labels.
     def backprop(self, x, y):
         """Return a tuple ``(nabla_b, nabla_w)`` representing the
         gradient for the cost function C_x.  ``nabla_b`` and
@@ -64,19 +67,25 @@ class Network(object):
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
         # feedforward
-        activation = x
+        activation = x.T
         activations = [x] # list to store all the activations, layer by layer
         zs = [] # list to store all the z vectors, layer by layer
-        for b, w in zip(self.biases, self.weights):
+
+        for index, (b, w) in enumerate(zip(self.biases, self.weights)):
             z = np.dot(w, activation)+b
             zs.append(z)
-            activation = self.sigmoid(z)
+            if(index == self.num_layers):
+                activation = self.softmax(z)
+            else:
+                activation = self.sigmoid(z)
             activations.append(activation)
         # backward pass
         delta = self.cost_derivative(activations[-1], y) * \
             self.sigmoid_prime(zs[-1])
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].transpose())
+
+        activations[0] = activations[0].T
         # Note that the variable l in the loop below is used a little
         # differently to the notation in Chapter 2 of the book.  Here,
         # l = 1 means the last layer of neurons, l = 2 is the
@@ -88,7 +97,7 @@ class Network(object):
             sp = self.sigmoid_prime(z)
             delta = np.dot(self.weights[-l+1].transpose(), delta) * sp
             nabla_b[-l] = delta
-            nabla_w[-l] = np.dot(delta, activations[-l-1].transpose())
+            nabla_w[-l] = np.dot(delta, activations[-l-1].T)
         return (nabla_b, nabla_w)
 
     def evaluate(self, test_data):
@@ -113,7 +122,7 @@ Networks_sample = Network([10, 9, 8 ,7])
 
 data_features = np.genfromtxt("data/features.txt", delimiter=",")
 data_targets = np.genfromtxt("data/targets.txt", delimiter=",")
-example = data_features[0]
-print("EXAMPLE, ", example)
-print("RESULT,", Networks_sample.feedforward(example))
-Networks_sample.fit(data_features, data_targets, 200, 200, 0.01)
+# example = data_features[0]
+# print("EXAMPLE, ", example)
+# print("RESULT,", Networks_sample.feedforward(example))
+Networks_sample.fit(data_features, data_targets, 10, 187, 0.01)
