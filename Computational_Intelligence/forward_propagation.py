@@ -57,12 +57,15 @@ class Network(object):
         self.weights = [w-(eta/len(mini_batch_data))*nw
                         for w, nw in zip(self.weights, nabla_w)]
         # print(np.shape(self.biases[0]))
-        print(" before change")
         # print(np.shape(nabla_b[0]))
         self.biases = [b-(eta/len(mini_batch_data))*nb
                        for b, nb in zip(self.biases, nabla_b)]
+        for i in range(1, self.num_layers):
+            n = np.shape(self.biases[-i])[0]
+            sum = self.biases[-i].sum(axis = 1)
+            average = sum / n
+            self.biases[-i] = average.reshape(len(sum), 1)
         # print(np.shape(self.biases[0]))
-        print("change after")
 
 
     # x: mini batch datas with feataures, y: mini batch datas with labels.
@@ -74,18 +77,17 @@ class Network(object):
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
         # feedforward
+        x = x.T
         activation = x
         activations = [x] # list to store all the activations, layer by layer
         zs = [] # list to store all the z vectors, layer by layer
         # print(np.shape(x))
         # print(np.shape(x.T))
-        print(np.shape(activations[0]))
-        activations[0] = activations[0].T
-        print("djksbk")
-        print(np.shape(activations[0]))
+        #activations[0] = activations[0].T
         for index, (b, w) in enumerate(zip(self.biases, self.weights)):
-            z = np.dot(w, activation[0])+b
+            z = np.dot(w, activation)+b
             zs.append(z)
+
             if(index == self.num_layers):
                 activation = self.softmax(z)
             else:
@@ -94,8 +96,6 @@ class Network(object):
         # backward pass
         delta = self.cost_derivative(activations[-1], y) * \
             self.sigmoid_prime(zs[-1])
-        print(np.shape(activations[-1]))
-        print(np.shape(zs[-1]))
         nabla_b[-1] = delta
         nabla_w[-1] = np.dot(delta, activations[-2].T)
 
@@ -125,6 +125,11 @@ class Network(object):
             prediction = np.argmax(output) + 1
             if(prediction == test_labels[i]):
                 sum = sum + 1
+        print("amount correct:")
+        print(sum)
+        print("test size:")
+        print(len(test_features))
+        print("kill meh:")
         return sum/len(test_features)
 
 
