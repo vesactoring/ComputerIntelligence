@@ -19,15 +19,9 @@ class Network(object):
     def sigmoid_prime(self, z):
         return self.sigmoid(z)*(1-self.sigmoid(z))
 
-    def feedforward(self, a):
-        for b, w in zip(self.biases, self.weights):
-            # print(np.shape(w))
-            # print(np.shape(b))
-            array = np.add(np.dot(w, a), b)
-            a = self.sigmoid(array)
-        return a
+   
 
-    def fit(self, training_data, target, epochs, mini_batch_size, eta):
+    def fit(self, mini_batch, mini_batch_y, epochs, mini_batch_size, eta):
         """Train the neural network using mini-batch stochastic
         gradient descent.  The ``training_data`` is a list of tuples
         ``(x, y)`` representing the training inputs and the desired
@@ -36,36 +30,40 @@ class Network(object):
         network will be evaluated against the test data after each
         epoch, and partial progress printed out.  This is useful for
         tracking progress, but slows things down substantially."""
-        n = len(training_data)
-        for j in range(epochs):
-            mini_batches_data = np.array_split(training_data, n/mini_batch_size)
-            mini_batches_y = np.array_split(target, n/mini_batch_size)
-            for mini_batch in mini_batches_data:
-                self.update_mini_batch(mini_batches_data, mini_batches_y, eta)
-    
-    def update_mini_batch(self, mini_batch_data, mini_batches_y, eta):
-        """Update the network's weights and biases by applying
-        gradient descent using backpropagation to a single mini batch.
-        The ``mini_batch`` is a list of tuples ``(x, y)``, and ``eta``
-        is the learning rate."""
+        n = len(mini_batch)
         nabla_b = [np.zeros(b.shape) for b in self.biases]
         nabla_w = [np.zeros(w.shape) for w in self.weights]
-        for i, x in enumerate(mini_batch_data):
-            delta_nabla_b, delta_nabla_w = self.backprop(x, mini_batches_y[i])
-            nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
-            nabla_w = [nw+dnw for nw, dnw in zip(nabla_w, delta_nabla_w)] 
-        self.weights = [w-(eta/len(mini_batch_data))*nw
+        delta_nabla_b, delta_nabla_w = self.backprop(mini_batch, mini_batch_y)
+        nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
+        nabla_w = [nw+dnw for nw, dnw in zip(nabla_w, delta_nabla_w)] 
+        self.weights = [w-(eta/len(mini_batch))*nw
                         for w, nw in zip(self.weights, nabla_w)]
-        # print(np.shape(self.biases[0]))
-        # print(np.shape(nabla_b[0]))
-        self.biases = [b-(eta/len(mini_batch_data))*nb
+        self.biases = [b-(eta/len(mini_batch))*nb
                        for b, nb in zip(self.biases, nabla_b)]
         for i in range(1, self.num_layers):
-            n = np.shape(self.biases[-i])[0]
+            sizu = np.shape(self.biases[-i])[1]
             sum = self.biases[-i].sum(axis = 1)
-            average = sum / n
+            average = sum / sizu
             self.biases[-i] = average.reshape(len(sum), 1)
-        # print(np.shape(self.biases[0]))
+    # def update_mini_batch(self, mini_batch, mini_batch_y, eta):
+    #     """Update the network's weights and biases by applying
+    #     gradient descent using backpropagation to a single mini batch.
+    #     The ``mini_batch`` is a list of tuples ``(x, y)``, and ``eta``
+    #     is the learning rate."""
+    #     nabla_b = [np.zeros(b.shape) for b in self.biases]
+    #     nabla_w = [np.zeros(w.shape) for w in self.weights]
+    #     delta_nabla_b, delta_nabla_w = self.backprop(mini_batch, mini_batch_y)
+    #     nabla_b = [nb+dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
+    #     nabla_w = [nw+dnw for nw, dnw in zip(nabla_w, delta_nabla_w)] 
+    #     self.weights = [w-(eta/len(mini_batch))*nw
+    #                     for w, nw in zip(self.weights, nabla_w)]
+    #     self.biases = [b-(eta/len(mini_batch))*nb
+    #                    for b, nb in zip(self.biases, nabla_b)]
+    #     for i in range(1, self.num_layers):
+    #         n = np.shape(self.biases[-i])[0]
+    #         sum = self.biases[-i].sum(axis = 1)
+    #         average = sum / n
+    #         self.biases[-i] = average.reshape(len(sum), 1)
 
 
     # x: mini batch datas with feataures, y: mini batch datas with labels.
@@ -81,11 +79,9 @@ class Network(object):
         activation = x
         activations = [x] # list to store all the activations, layer by layer
         zs = [] # list to store all the z vectors, layer by layer
-        # print(np.shape(x))
-        # print(np.shape(x.T))
-        #activations[0] = activations[0].T
         for index, (b, w) in enumerate(zip(self.biases, self.weights)):
             z = np.dot(w, activation)+b
+            
             zs.append(z)
 
             if(index == self.num_layers):
@@ -94,24 +90,45 @@ class Network(object):
                 activation = self.sigmoid(z)
             activations.append(activation)
         # backward pass
+        
+        
         delta = self.cost_derivative(activations[-1], y) * \
             self.sigmoid_prime(zs[-1])
+        #sizu = len(delta.T)
         nabla_b[-1] = delta
-        nabla_w[-1] = np.dot(delta, activations[-2].T)
-
+        nabla_w[-1] = np.dot(delta, activations[-2].T) #/ sizu
+        
         # Note that the variable l in the loop below is used a little
         # differently to the notation in Chapter 2 of the book.  Here,
         # l = 1 means the last layer of neurons, l = 2 is the
         # second-last layer, and so on.  It's a renumbering of the
         # scheme in the book, used here to take advantage of the fact
         # that Python can use negative indices in lists.
+        sizes_w = []
         for l in range(2, self.num_layers):
             z = zs[-l]
             sp = self.sigmoid_prime(z)
             delta = np.dot(self.weights[-l+1].transpose(), delta) * sp
+            sizes_w.append(len(delta.T))
             nabla_b[-l] = delta
-            nabla_w[-l] = np.dot(delta, activations[-l-1].T)
+            nabla_w[-l] = np.dot(delta, activations[-l-1].T) #/ sizu
+
+        for i in range(1, len(nabla_w)):
+            nabla_w[i] = nabla_w[i] / sizes_w[i-1]
+
         return (nabla_b, nabla_w)
+
+    def feedforward(self, a):
+        a = np.reshape(a, (len(a), 1))
+        # print(self.weights[0])
+        # print(a)
+        # print(self.biases[0])
+        # print(np.dot(self.weights[0], a) + self.biases[0])
+        for b, w in zip(self.biases, self.weights):
+            array = np.dot(w, a) + b
+            a = self.softmax(array)
+            
+        return a
 
     def evaluate(self, test_features, test_labels):
         """Return the number of test inputs for which the neural
@@ -120,10 +137,15 @@ class Network(object):
         neuron in the final layer has the highest activation."""
         sum = 0
         for i, data in enumerate(test_features):
-            # print(np.shape(data))
             output = self.feedforward(data)
-            prediction = np.argmax(output) + 1
+            prediction = np.argmax(output)
+            print(np.shape(output))
+            print(output)
+            print(np.argmax(output))
+            print(test_labels[i])
+            print("nexttttttttttttttttt")
             if(prediction == test_labels[i]):
+                
                 sum = sum + 1
         print("amount correct:")
         print(sum)
