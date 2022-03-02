@@ -30,11 +30,11 @@ def feedForwardAll(input, weight_layers):
 
 
 
-def cost_function(a2, y):
-    m = y
-    cost = -(1/m)*np.sum(y*np.log(a2))
+# def cost_function(a2, y):
+#     m = y
+#     cost = -(1/m)*np.sum(y*np.log(a2))
     
-    return cost
+#     return cost
 
 # weights_layer: last layer should not have the bias (one entry less)
 def training(train_x, train_y, epoch, learning_rate, weight_layers):
@@ -46,11 +46,11 @@ def training(train_x, train_y, epoch, learning_rate, weight_layers):
             # input sample data adds bias (one dimentional array)
             input = np.append(data, 1)
             # label for the sample data
-
+            label = train_y[i]
             # layer by layer, wx + b for each neuron in the layer (two dimentional array)
             zs = []
             # layer by layer, the activation value for neurons in the layer (two dimentional array)
-            activations = []
+            activations = [input]
             
 
             # Each layer, feed-forward
@@ -61,20 +61,20 @@ def training(train_x, train_y, epoch, learning_rate, weight_layers):
                 if(layer != layer_number - 1):
                     input = np.append(input, 1)
                 activations.append(input)
-            print("THE COST FUNCTION IS: " + str(cost_function(activations, train_y)))
+            # print("THE COST FUNCTION IS: " + str(cost_function(activations, train_y)))
 
             # backward
             weights_gradients = [np.zeros(w.shape) for w in weight_layers]
 
             # The last layer
             delta = cost(activations[-1], label) * sigmoid_prime(zs[-1])
-            print(np.shape(activations[-2].reshape(len(activations[-2]),1)))
+            # print(np.shape(activations[-2].reshape(len(activations[-2]),1)))
             weights_gradients[-1] = np.dot(delta.reshape(len(delta), 1), activations[-2].reshape(len(activations[-2]), 1).T)
 
             # Starting from the last second layer and ,oving forward
             for l in range(2, layer_number):
-                print(np.shape(delta))
-                print(np.shape(weight_layers[-l + 1].transpose()))
+                # print(np.shape(delta))
+                # print(np.shape(weight_layers[-l + 1].transpose()))
                 product = np.dot(weight_layers[-l + 1].transpose(), delta)
                 delta = product[:-1] * sigmoid_prime(zs[-l])
                 weights_gradients[-l] = np.dot(delta.reshape(len(delta), 1), activations[-l-1].reshape(len(activations[-l-1]), 1).transpose())

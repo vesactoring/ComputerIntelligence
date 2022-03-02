@@ -55,5 +55,5 @@ if __name__ == '__main__':
 #     nn.train(training_data_features, training_data_labels)
 #     print(i, nn.calculate_total_error(training_sets))
 weights = nfp.training(training_data_features, training_data_labels, 200, 0.2, nfp.init_layers([11, 10, 9, 7]))
-print(weights)
+# print(weights)
 nfp.evaluate(test_data_features, test_data_labels, weights)
