@@ -40,8 +40,7 @@ class Network(object):
         for j in range(epochs):
             mini_batches_data = np.array_split(training_data, n/mini_batch_size)
             mini_batches_y = np.array_split(target, n/mini_batch_size)
-            for mini_batch in mini_batches_data:
-                self.update_mini_batch(mini_batches_data, mini_batches_y, eta)
+            self.update_mini_batch(mini_batches_data, mini_batches_y, eta)
     
     def update_mini_batch(self, mini_batch_data, mini_batches_y, eta):
         """Update the network's weights and biases by applying
@@ -123,8 +122,12 @@ class Network(object):
             # print(np.shape(data))
             output = self.feedforward(data)
             prediction = np.argmax(output) + 1
+            print(prediction)
+            print(test_labels[i])
             if(prediction == test_labels[i]):
                 sum = sum + 1
+                
+        
         print("amount correct:")
         print(sum)
         print("test size:")
