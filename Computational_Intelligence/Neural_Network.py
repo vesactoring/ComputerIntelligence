@@ -1,5 +1,5 @@
 import numpy as np
-
+import matplotlib as plt
 class Network(object):
 
     def __init__(self, sizes, X_train, Y_train, learning_rate, iterations):
@@ -41,8 +41,6 @@ class Network(object):
 
     def derivative_tanh(self, x):
         return (1 - np.power(np.tanh(x), 2))
-
-    
 
     def forward_propagation(self, x):        
         z1 = np.dot(self.parameters["w1"], x) + self.parameters["b1"]
@@ -127,8 +125,8 @@ class Network(object):
             
             cost_list.append(cost)
             
-            # if(i%(self.iterations/10) == 0):
-            #     print("Cost after", i, "iterations is :", cost)
+            if(i%(self.iterations/10) == 0):
+                print("Cost after", i, "iterations is :", cost)
             
         return self.parameters, cost_list
 
@@ -137,7 +135,7 @@ class Network(object):
         y_prediction = forward_memory['a3']   
         
         # Get highest probabolity
-        y_prediction = np.argmax(y_prediction, 0)  
+        y_prediction = np.argmax(y_prediction, 0)
         
         # Get target class
         target = np.argmax(target, 0)
