@@ -42,19 +42,17 @@ def cross_validation(data, targets, neurons1, neurons2):
 
 
 
-neurons_amount1 = np.linspace(start=7, stop=30, num=4, dtype=int)
-neurons_amount2 = np.linspace(start=7, stop=30, num=4, dtype=int)
+neurons_amount = np.linspace(start=7, stop=30, num=4, dtype=int)
 
-print(neurons_amount1)
-print(neurons_amount2)
+print(neurons_amount)
 accuracies = []
 
-for index, neuron in enumerate(neurons_amount1):
-    accuracy_neuron = cross_validation(data_features, data_targets_transform, neuron, neurons_amount2[index])
+for index, neuron in enumerate(neurons_amount):
+    accuracy_neuron = cross_validation(data_features, data_targets_transform, int(0.6*neuron), int(0.4*neuron))
     accuracies.append(accuracy_neuron)
     
 _, axis = plt.subplots()
-axis.plot(neurons_amount1, accuracies)
+axis.plot(neurons_amount, accuracies)
 
 axis.legend()
 axis.set_xlabel('Neurons')
