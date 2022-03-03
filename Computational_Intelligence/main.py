@@ -1,5 +1,7 @@
 import Neural_Network
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.axis as axis
 
 data_features = np.genfromtxt("data/features.txt", delimiter=",")
 data_targets = np.genfromtxt("data/targets.txt", delimiter=",")
@@ -39,11 +41,30 @@ X_test = np.transpose(X_test)
 Y_test = np.transpose(Y_test)
 
 # Test
-iterations = 450
-learning_rate = 0.4
+
+iterations = 1000
+learning_rate = 0.5
+# Networks_sample = Neural_Network.Network([data_features.shape[1], 10, 9 , 7], X_train, Y_train, learning_rate, iterations)
+# param_values, cost_weights = Networks_sample.model()
+
+# accuracies = []
+# times = np.linspace(1, 10, 10)
+
+# for i in range(10):
 Networks_sample = Neural_Network.Network([data_features.shape[1], 10, 9 , 7], X_train, Y_train, learning_rate, iterations)
 Networks_sample.model()
+# accuracy = round(Networks_sample.accuracy(X_train, Y_train), 2)
+# accuracies.append(round(Networks_sample.accuracy(X_train, Y_train), 2))
 
+
+# plt.plot(times, accuracies)
+# plt.xlabel('different weights')
+# plt.ylabel('accuracies')
+# plt.xlim(0, 10)
+# plt.ylim(0, 100)
+# plt.title('performance accuracies for different weights')
+# plt.grid()
+# plt.show()
 print("Accuracy of Train Dataset", round(Networks_sample.accuracy(X_train, Y_train), 2), "%")
 print("Accuracy of Validation Dataset", round(Networks_sample.accuracy(X_validation, Y_validation), 2), "%")
 print("Accuracy of Test Dataset", round(Networks_sample.accuracy(X_test, Y_test), 2), "%")

@@ -46,13 +46,13 @@ class Network(object):
 
     def forward_propagation(self, x):        
         z1 = np.dot(self.parameters["w1"], x) + self.parameters["b1"]
-        a1 = self.sigmoid(z1)
+        a1 = self.tanh(z1)
 
         z2 = np.dot(self.parameters["w2"], a1) + self.parameters["b2"]
-        a2 = self.sigmoid(z2)
+        a2 = self.tanh(z2)
         
         z3 = np.dot(self.parameters["w3"], a2) + self.parameters["b3"]
-        a3 = self.softmax(z3)
+        a3 = self.tanh(z3)
         
         forward_memory = {
             "z1" : z1,
@@ -81,11 +81,11 @@ class Network(object):
         dw3 = (1/n)*np.dot(dz3, forward_memory['a2'].T)
         db3 = (1/n)*np.sum(dz3, axis = 1, keepdims = True)
         
-        dz2 = np.dot(self.parameters['w3'].T, dz3)*self.derivative_sigmoid(forward_memory['a2'])
+        dz2 = np.dot(self.parameters['w3'].T, dz3)*self.derivative_tanh(forward_memory['a2'])
         dw2 = (1/n)*np.dot(dz2, forward_memory['a1'].T)
         db2 = (1/n)*np.sum(dz2, axis = 1, keepdims = True)
 
-        dz1 = np.dot(self.parameters['w2'].T, dz2)*self.derivative_sigmoid(forward_memory['a1'])
+        dz1 = np.dot(self.parameters['w2'].T, dz2)*self.derivative_tanh(forward_memory['a1'])
         dw1 = (1/n)*np.dot(dz1, self.X_train.T)
         db1 = (1/n)*np.sum(dz1, axis = 1, keepdims = True)
         
