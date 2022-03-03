@@ -72,7 +72,7 @@ def training(train_x, train_y, epoch, learning_rate, weight_layers):
             weights_gradients[-1] = np.dot(delta.reshape(len(delta), 1), activations[-2].reshape(len(activations[-2]), 1).T)
 
             # Starting from the last second layer and ,oving forward
-            for l in range(2, layer_number):
+            for l in range(2, layer_number + 1):
                 # print(np.shape(delta))
                 # print(np.shape(weight_layers[-l + 1].transpose()))
                 product = np.dot(weight_layers[-l + 1].transpose(), delta)
@@ -80,10 +80,12 @@ def training(train_x, train_y, epoch, learning_rate, weight_layers):
                 weights_gradients[-l] = np.dot(delta.reshape(len(delta), 1), activations[-l-1].reshape(len(activations[-l-1]), 1).transpose())
             
             # print(type(weights_gradients))
-            # print(weight_layers)
-            weight_layers -= learning_rate * np.array(weights_gradients)
+            # print(np.shape(weights_gradients[0]))
+            if (learning_rate * np.array(weights_gradients[0] == 0).all() or learning_rate * np.array(weights_gradients[1] == 0).all() or learning_rate * np.array(weights_gradients[2] == 0).all()):
+                print("WHATTTATTAXSJXSB!!!!!!!!!!!!!!!!!!")
+            weight_layers = weight_layers - learning_rate * np.array(weights_gradients)
 
-            return weight_layers
+    return weight_layers
 
 def evaluate(test_features, test_labels, weights):
     """Return the number of test inputs for which the neural
@@ -95,6 +97,7 @@ def evaluate(test_features, test_labels, weights):
         output = feedforward(data, weights)
         prediction = np.argmax(output) + 1
         # print(test_labels[i])
+        # print(prediction)
         if(prediction == test_labels[i]):
             sum = sum + 1
     print(sum)
