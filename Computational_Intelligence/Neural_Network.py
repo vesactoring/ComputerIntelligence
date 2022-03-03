@@ -63,6 +63,29 @@ class Network(object):
         
         return forward_memory
 
+    def forward_propagation_static(self, x, parameters):        
+        z1 = np.dot(parameters["w1"], x) + parameters["b1"]
+        a1 = self.tanh(z1)
+
+        z2 = np.dot(parameters["w2"], a1) + parameters["b2"]
+        a2 = self.tanh(z2)
+        
+        z3 = np.dot(parameters["w3"], a2) + parameters["b3"]
+        a3 = self.softmax(z3)
+        
+        forward_memory = {
+            "z1" : z1,
+            "a1" : a1,
+            "z2" : z2,
+            "a2" : a2,
+            "z3" : z3,
+            "a3" : a3
+        }
+        
+        return forward_memory
+
+        
+
     # Cost Function: Mean squared error
     def cost_function(self, a3):
         
@@ -124,9 +147,6 @@ class Network(object):
             self.update_parameters(gradients)
             
             cost_list.append(cost)
-            
-            if(i%(self.iterations/10) == 0):
-                print("Cost after", i, "iterations is :", cost)
             
         return self.parameters, cost_list
 

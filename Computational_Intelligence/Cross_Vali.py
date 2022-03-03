@@ -33,7 +33,7 @@ def cross_validation(data, targets, neurons1, neurons2):
                 training_folds.extend(training_fold)
                 training_folds_targets.extend(folds_targets[j])
         # clf.fit(training_folds, training_folds_targets)
-        trainingModel = Neural_Network.Network([10, neurons1, neurons2 , 7], np.transpose(training_folds), np.transpose(training_folds_targets), 0.3, 30)
+        trainingModel = Neural_Network.Network([10, neurons1, neurons2 , 7], np.transpose(training_folds), np.transpose(training_folds_targets), 0.4, 220)
         trainingModel.model()
         average_accuracy += (trainingModel.accuracy(np.transpose(test_fold), np.transpose(folds_targets[i])))
     return average_accuracy/10
@@ -62,4 +62,3 @@ axis.set_ylabel('Accuracy')
 plt.title('Accuracy for different amount of neurons')
 plt.grid()
 plt.show()
-
