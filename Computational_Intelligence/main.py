@@ -104,37 +104,37 @@ if __name__ == '__main__':
 
     num=(0, {})
     for item in accuracy:
-    if item[0]>num[0]:
-      num=item #num has the whole tuple with the highest y value and its x value
+        if item[0]>num[0]:
+            num=item #num has the whole tuple with the highest y value and its x value
     ####################
     #####PLOTING########
     ####################
-    plt.xlabel('different epochs')
-    plt.ylabel('cost_function_values')
-    plt.xlim(0, iterations)
-    plt.ylim(0, np.max(cost_list_epoch))
-    plt.title('performance errors')
-    plt.grid()
-    new_cost_list = []
-    new_validation_list = []
-    i_list = []
-    i=0
-    print(i)
-    while i < iterations:
-      new_cost_list.append(cost_list_epoch[i])
-      i_list.append(i)
-      i = i + 10
-    plt.plot(i_list, new_cost_list)
-    plt.show()
+    # plt.xlabel('different epochs')
+    # plt.ylabel('cost_function_values')
+    # plt.xlim(0, iterations)
+    # plt.ylim(0, np.max(cost_list_epoch))
+    # plt.title('performance errors')
+    # plt.grid()
+    # new_cost_list = []
+    # new_validation_list = []
+    # i_list = []
+    # i=0
+    # print(i)
+    # while i < iterations:
+    #   new_cost_list.append(cost_list_epoch[i])
+    #   i_list.append(i)
+    #   i = i + 10
+    # plt.plot(i_list, new_cost_list)
+    # plt.show()
 
-    plt.xlabel('different epochs')
-    plt.ylabel('cost_function_values')
-    plt.xlim(0, iterations)
-    plt.ylim(0, np.max(cost_list))
-    plt.title('performance errors')
-    plt.grid()
-    plt.plot(i_list, new_validation_list)
-    plt.show()
+    # plt.xlabel('different epochs')
+    # plt.ylabel('cost_function_values')
+    # plt.xlim(0, iterations)
+    # plt.ylim(0, np.max(cost_list))
+    # plt.title('performance errors')
+    # plt.grid()
+    # plt.plot(i_list, new_validation_list)
+    # plt.show()
     ####################
     #####PLOTING########
     ####################
