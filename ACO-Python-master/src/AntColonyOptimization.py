@@ -43,11 +43,10 @@ class AntColonyOptimization:
 
                 #Coordinates
                 forbidden_zone = []
-
+                remember_last_spot = None
                 while(not follow_route.__eq__(coordinate_end)):
                     possibilities = [0,1,2,3]
                     # possibilities.remove(last_dirction)
-                    remember_last_spot = None
                     if(self.counting_walls(follow_route) == 3):
                         while(self.counting_walls(follow_route) >= 2):
                         # substract_direction on the previous direction
@@ -55,31 +54,23 @@ class AntColonyOptimization:
                             follow_route = antwalk.subtract_direction(self.int_to_dir(remember_last_spot))
                         # Add the entrance of a forbidden zone
                         forbidden_zone.append(follow_route.add_direction(self.int_to.dir(remember_last_spot)))
-                        possibilities.remove(remember_last_spot)
-
-                        
-                            
                         
 
+                    # Ants shouldn't go back
+                    possibilities.remove(remember_last_spot)
 
-                        
+                    number = np.random.choice(possibilities)
+                    direction = self.int_to_dir(number)
+                    new_coordinate = follow_route.add_direction(direction)
 
-                    
-                    while(len(possibilities) > 0):
-                        number = np.random.choice(possibilities)
-                        direction = self.int_to_dir(number)
-                        new_coordinate = follow_route.add_direction(direction)
-
-                        if (self.maze.in_bounds(new_coordinate) and self.maze.walls[new_coordinate.x][new_coordinate.y] != 0):
-                            follow_route = new_coordinate
-                            antwalk.add(direction)
-                            last_dirction = number
-                            break
-                        else:
-                            possibilities.remove(number)
-
-                    if (len(possibilities)  == 0):
-                        antwalk.remove_last()
+                    if (self.maze.in_bounds(new_coordinate) and self.maze.walls[new_coordinate.x][new_coordinate.y] != 0):
+                        follow_route = new_coordinate
+                        antwalk.add(direction)
+                        # remember the reverse of the current direction. 
+                        remember_last_spot = Direction.reverse(number)
+                        break
+                    else:
+                        possibilities.remove(number)
                         
 
                         #     while(intWalk.size() != 4):
