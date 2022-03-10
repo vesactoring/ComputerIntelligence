@@ -1,6 +1,10 @@
 import os, sys
+from turtle import width
+import numpy as np
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
+from src.Coordinate import Coordinate
+from src.Direction import Direction
 import traceback
 
 # Class that holds all the maze data. This means the pheromones, the open and blocked tiles in the system as
@@ -17,11 +21,13 @@ class Maze:
         self.width = width
         self.start = None
         self.end = None
-        self.initialize_pheromones()
+        self.pheromones = self.initialize_pheromones()
+        
 
     # Initialize pheromones to a start value.
     def initialize_pheromones(self):
-        return
+        return np.zeros((self.width, self.length))
+        # return np.zeros(self.width, self.length)
 
     # Reset the maze for a new shortest path problem.
     def reset(self):
@@ -31,7 +37,13 @@ class Maze:
     # @param r The route of the ants
     # @param Q Normalization factor for amount of dropped pheromone
     def add_pheromone_route(self, route, q):
-        return
+        path = route.get_route()
+        start = route.get_start()
+        amount = q / route.size()
+        for i in range(len(path)):
+            coordinate = start.add_direction(path[i])
+            self.pheromones[coordinate.x][coordinate.y] = amount + self.evaporate(0.5)*self.get_pheromone(coordinate)
+        return amount
 
      # Update pheromones for a list of routes
      # @param routes A list of routes
@@ -43,7 +55,7 @@ class Maze:
     # Evaporate pheromone
     # @param rho evaporation factor
     def evaporate(self, rho):
-       return
+       return (1 - rho)
 
     # Width getter
     # @return width of the maze
@@ -59,13 +71,20 @@ class Maze:
     # @param position The position to check the neighbours of.
     # @return the pheromones of the neighbouring positions.
     def get_surrounding_pheromone(self, position):
-        return None
+        return (
+            self.get_pheromone(position.add_direction(Direction.east)),
+            self.get_pheromone(position.add_direction(Direction.north)),
+            self.get_pheromone(position.add_direction(Direction.west)),
+            self.get_pheromone(position.add_direction(Direction.south))
+        )
 
     # Pheromone getter for a specific position. If the position is not in bounds returns 0
     # @param pos Position coordinate
     # @return pheromone at point
     def get_pheromone(self, pos):
-        return 0
+        if (not self.in_bounds(pos)):
+            return 0
+        return self.pheromones[pos.x][pos.y]
 
     # Check whether a coordinate lies in the current maze.
     # @param position The position to be checked
