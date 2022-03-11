@@ -1,4 +1,6 @@
 import os, sys
+from secrets import choice
+from turtle import shape
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 import numpy as np
 import time
@@ -35,43 +37,69 @@ class AntColonyOptimization:
         
         coordinate_start = Coordinate(start.x, start.y)
         coordinate_end = Coordinate(end.x, end.y)
+
+        shortest_route = Route(coordinate_start)
         for i in range(self.generations):
+            routes = []
             for j in range(self.ants_per_gen):
                 # antwalk: A list of numbers which represents the decisions
                 antwalk = Route(coordinate_start)
-                follow_route = coordinate_start
+                coordinate_current = coordinate_start
 
                 #Coordinates
                 forbidden_zone = []
-                remember_last_spot = None
-                while(not follow_route.__eq__(coordinate_end)):
-                    possibilities = [0,1,2,3]
-                    # possibilities.remove(last_dirction)
-                    if(self.counting_walls(follow_route) == 3):
-                        while(self.counting_walls(follow_route) >= 2):
-                        # substract_direction on the previous direction
-                            remember_last_spot = antwalk.remove_last()
-                            follow_route = antwalk.subtract_direction(self.int_to_dir(remember_last_spot))
-                        # Add the entrance of a forbidden zone
-                        forbidden_zone.append(follow_route.add_direction(self.int_to.dir(remember_last_spot)))
+                forbidden_zone.append(coordinate_current)
+                
+                while(not coordinate_current.__eq__(coordinate_end)):
+                    choices = [0,1,2,3]
+                    probabilities = maze.get_surrounding_pheromone(coordinate_current)
+                    pheromone_sum = sum(probabilities)
+                    probabilities = np.array(probabilities) / pheromone_sum
+                #     if(self.counting_walls(follow_route) == 3):
+                #         while(self.counting_walls(follow_route) >= 2):
+                #         # substract_direction on the previous direction
+                #             remember_last_spot = antwalk.remove_last()
+                #             follow_route = antwalk.subtract_direction(self.int_to_dir(remember_last_spot))
+                #         # Add the entrance of a forbidden zone
+                #         forbidden_zone.append(follow_route.add_direction(self.int_to.dir(remember_last_spot)))
+                    while(len(choices) > 0):
+                        number = np.random.choice(choices, p=probabilities)
+                        print("**************")
+                        print(number)
+                        print(choices)
+                        print("Before " + str(probabilities))
+                        probabilities = np.delete(probabilities, choices.index(number))
+                        if(np.sum(probabilities) == 0):
+                            print("choice and antwalk")
+                            print(choice)
+                            print(antwalk)
+                            choices.clear()
+                        else:
+                            probabilities = probabilities / np.sum(probabilities)
+                            choices.remove(number)
+                        print("After " + str(probabilities))
+                        print("****************")
+
+                        direction = self.int_to_dir(number)
+                        new_coordinate = coordinate_current.add_direction(direction)
+
+                        # The step setp should not be the path the ant has taken
+                        if (self.maze.in_bounds(new_coordinate) and self.maze.walls[new_coordinate.x][new_coordinate.y] != 0 and (not new_coordinate in forbidden_zone)):
+                            forbidden_zone.append(new_coordinate)
+                            coordinate_current = new_coordinate
+                            antwalk.add(direction)
+                            break            
+                        else:  
+                            if(len(choices) == 0):
+                                antwalk.remove_last() 
+                    
+                    if(antwalk.shorter_than(shortest_route)):
+                        shortest_route = antwalk
                         
 
-                    # Ants shouldn't go back
-                    possibilities.remove(remember_last_spot)
-
-                    number = np.random.choice(possibilities)
-                    direction = self.int_to_dir(number)
-                    new_coordinate = follow_route.add_direction(direction)
-
-                    if (self.maze.in_bounds(new_coordinate) and self.maze.walls[new_coordinate.x][new_coordinate.y] != 0):
-                        follow_route = new_coordinate
-                        antwalk.add(direction)
-                        # remember the reverse of the current direction. 
-                        remember_last_spot = Direction.reverse(number)
-                        break
-                    else:
-                        possibilities.remove(number)
-                        
+                routes.append(antwalk)
+                maze.evaporate(self.evaporation)
+                maze.add_pheromone_routes(routes)
 
                         #     while(intWalk.size() != 4):
                         #         new_int = np.random.randint(0, 4)
@@ -83,7 +111,9 @@ class AntColonyOptimization:
                     
                     # antwalk.add(direction)
                     #follow_route = start.add_coordinate(direction)
-        return antwalk
+            
+            
+        return shortest_route
 
     def counting_walls(self, coordinate):
         count = 0
@@ -131,9 +161,9 @@ if __name__ == "__main__":
     evap = 0.1
 
     #construct the optimization objects
-    maze = Maze.create_maze("./../data/easy maze.txt")
+    maze = Maze.create_maze("./data/easy maze.txt")
     # print(maze)
-    spec = PathSpecification.read_coordinates("./../data/easy coordinates.txt")
+    spec = PathSpecification.read_coordinates("./data/easy coordinates.txt")
     aco = AntColonyOptimization(maze, gen, no_gen, q, evap)
 
     #save starting time
@@ -147,7 +177,7 @@ if __name__ == "__main__":
 
     # print(shortest_route)
     #save solution!!!!!
-    shortest_route.write_to_file("./../data/easy_solution.txt")
+    shortest_route.write_to_file("./data/easy_solution.txt")
 
     #print route size
     print("Route size: " + str(shortest_route.size()))

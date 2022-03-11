@@ -7,13 +7,13 @@ import numpy as np
 from src.Maze import Maze
 
 
-test = Maze.create_maze("../data/easy maze.txt")
+test = Maze.create_maze("./data/easy maze.txt")
 print(test)
 coordin = Coordinate(0,0)
 coordin = coordin.add_direction(Direction.east)
 print(coordin)
 
-spec = PathSpecification.read_coordinates("./../data/hard coordinates.txt")
+spec = PathSpecification.read_coordinates("./data/hard coordinates.txt")
 print("SPEC: ", spec.start.x)
 
 print("test")

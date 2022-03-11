@@ -26,8 +26,7 @@ class Maze:
 
     # Initialize pheromones to a start value.
     def initialize_pheromones(self):
-        return np.zeros((self.width, self.length))
-        # return np.zeros(self.width, self.length)
+        return self.walls.copy()
 
     # Reset the maze for a new shortest path problem.
     def reset(self):
@@ -42,7 +41,7 @@ class Maze:
         amount = q / route.size()
         for i in range(len(path)):
             coordinate = start.add_direction(path[i])
-            self.pheromones[coordinate.x][coordinate.y] = amount + self.evaporate(0.5)*self.get_pheromone(coordinate)
+            self.pheromones[coordinate.x][coordinate.y] = amount + self.get_pheromone(coordinate)
         return amount
 
      # Update pheromones for a list of routes
@@ -55,7 +54,7 @@ class Maze:
     # Evaporate pheromone
     # @param rho evaporation factor
     def evaporate(self, rho):
-       return (1 - rho)
+       self.pheromones = self.pheromones * (1-rho)
 
     # Width getter
     # @return width of the maze
@@ -71,12 +70,12 @@ class Maze:
     # @param position The position to check the neighbours of.
     # @return the pheromones of the neighbouring positions.
     def get_surrounding_pheromone(self, position):
-        return (
+        return [
             self.get_pheromone(position.add_direction(Direction.east)),
             self.get_pheromone(position.add_direction(Direction.north)),
             self.get_pheromone(position.add_direction(Direction.west)),
             self.get_pheromone(position.add_direction(Direction.south))
-        )
+        ]
 
     # Pheromone getter for a specific position. If the position is not in bounds returns 0
     # @param pos Position coordinate
