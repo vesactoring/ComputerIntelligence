@@ -34,49 +34,13 @@ class AntColonyOptimization:
      # @return ACO optimized route
     def find_shortest_route(self, path_specification):
         self.maze.reset()
-        start = path_specification.get_start()
-        end = path_specification.get_end()
         
-        coordinate_start = Coordinate(start.x, start.y)
-        coordinate_end = Coordinate(end.x, end.y)
-
         shortest_route = None
         for i in range(self.generations):
             routes = []
             for j in range(self.ants_per_gen):
-                ant_route = Route(coordinate_start)
-                coordinate_current = coordinate_start
-
-                been_before = []
-                been_before.append(coordinate_current)
-                while(not coordinate_current.__eq__(coordinate_end)):
-                    # Returns Surrounding Pheromone class
-                    surrounding_pheromone = self.maze.get_surrounding_pheromone(coordinate_current)
-                    # total_pheromone = surrounding_pheromone.get_total_surrounding_pheromone()
-                    probabilities = []
-                    choices = [0, 1, 2, 3]
-
-                    for i in range(4):
-                        direction = self.int_to_dir(i)
-                        direction_pheromone = surrounding_pheromone.get(direction)
-                        if(direction_pheromone > 0 and (coordinate_current.add_direction(direction) not in been_before) and (self.maze.in_bounds(coordinate_current.add_direction(direction)))):
-                            probabilities.append(direction_pheromone)
-                        else:
-                            choices.remove(i)
-
-                    probabilities = np.array(probabilities) / np.sum(probabilities)
-
-                    if(len(choices) > 0):
-                        step_choice_number = np.random.choice(choices, p=probabilities)
-                        step_direction = self.int_to_dir(step_choice_number)
-                        new_coordinate = coordinate_current.add_direction(step_direction)
-
-                        been_before.append(new_coordinate)
-                        coordinate_current = new_coordinate
-                        ant_route.add(step_direction)
-                    else: 
-                        previous_direction = ant_route.remove_last()
-                        coordinate_current = coordinate_current.subtract_direction(previous_direction)
+                ant = Ant(self.maze, path_specification)
+                ant_route = ant.find_route()
                 if(shortest_route is None):
                     shortest_route = ant_route
                 else:
@@ -85,27 +49,8 @@ class AntColonyOptimization:
                 routes.append(ant_route)
             self.maze.evaporate(self.evaporation)
             self.maze.add_pheromone_routes(routes, self.q)
-        print(shortest_route)
         return shortest_route
 
-
-        
-
-        # return None
-    def int_to_dir(self, number):
-        if number == 0:
-            return Direction.east
-        elif number == 1:
-            return Direction.north
-        elif number == 2:
-            return Direction.west
-        elif number == 3:
-            return Direction.south
-        else:
-            return -1
-
-    def get_evaporate(self):
-        return self.evaporation
 # Driver function for Assignment 1
 if __name__ == "__main__":
     print("is this being used????")
@@ -116,8 +61,8 @@ if __name__ == "__main__":
     evap = 0.1
 
     #construct the optimization objects
-    maze = Maze.create_maze("data\hard maze.txt")
-    spec = PathSpecification.read_coordinates("data\hard coordinates.txt")
+    maze = Maze.create_maze("data\medium maze.txt")
+    spec = PathSpecification.read_coordinates("data\medium coordinates.txt")
     aco = AntColonyOptimization(maze, gen, no_gen, q, evap)
 
     #save starting time
