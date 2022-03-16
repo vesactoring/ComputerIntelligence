@@ -37,3 +37,7 @@ class SurroundingPheromone:
             return self.south
         else:
             return None
+
+Pher = SurroundingPheromone(1, 2, 3, 4)
+# print("PHEROMONE",  Pher.get_total_surrounding_pheromone())
+# print("PHEROMONE NORTH",  Pher.get(Direction.north))

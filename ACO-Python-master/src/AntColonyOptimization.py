@@ -4,9 +4,11 @@ from turtle import shape
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 import numpy as np
 import time
+from src.Ant import Ant
 from src.Maze import Maze
 from src.PathSpecification import PathSpecification
 from src.Route import Route
+from src.SurroundingPheromone import SurroundingPheromone
 from src.Coordinate import Coordinate
 from src.Direction import Direction
 
@@ -38,96 +40,55 @@ class AntColonyOptimization:
         coordinate_start = Coordinate(start.x, start.y)
         coordinate_end = Coordinate(end.x, end.y)
 
-        shortest_route = Route(coordinate_start)
+        shortest_route = None
         for i in range(self.generations):
             routes = []
             for j in range(self.ants_per_gen):
-                # antwalk: A list of numbers which represents the decisions
-                antwalk = Route(coordinate_start)
+                ant_route = Route(coordinate_start)
                 coordinate_current = coordinate_start
 
-                #Coordinates
-                forbidden_zone = []
-                forbidden_zone.append(coordinate_current)
+                been_before = []
+                been_before.append(coordinate_current)
                 while(not coordinate_current.__eq__(coordinate_end)):
-                    choices = [0,1,2,3]
-                    probabilities = self.maze.get_surrounding_pheromone(coordinate_current)
-                    pheromone_sum = sum(probabilities)
-                    probabilities = np.array(probabilities) / pheromone_sum
-                #     if(self.counting_walls(follow_route) == 3):
-                #         while(self.counting_walls(follow_route) >= 2):
-                #         # substract_direction on the previous direction
-                #             remember_last_spot = antwalk.remove_last()
-                #             follow_route = antwalk.subtract_direction(self.int_to_dir(remember_last_spot))
-                #         # Add the entrance of a forbidden zone
-                #         forbidden_zone.append(follow_route.add_direction(self.int_to.dir(remember_last_spot)))
-                    while(len(choices) > 0):
-                        number = np.random.choice(choices, p=probabilities)
-                        probabilities = np.delete(probabilities, choices.index(number))
-                        if(np.sum(probabilities) == 0):
-                            choices.clear()
+                    # Returns Surrounding Pheromone class
+                    surrounding_pheromone = self.maze.get_surrounding_pheromone(coordinate_current)
+                    # total_pheromone = surrounding_pheromone.get_total_surrounding_pheromone()
+                    probabilities = []
+                    choices = [0, 1, 2, 3]
+
+                    for i in range(4):
+                        direction = self.int_to_dir(i)
+                        direction_pheromone = surrounding_pheromone.get(direction)
+                        if(direction_pheromone > 0 and (coordinate_current.add_direction(direction) not in been_before) and (self.maze.in_bounds(coordinate_current.add_direction(direction)))):
+                            probabilities.append(direction_pheromone)
                         else:
-                            probabilities = probabilities / np.sum(probabilities)
-                            choices.remove(number)
+                            choices.remove(i)
 
-                        direction = self.int_to_dir(number)
-                        new_coordinate = coordinate_current.add_direction(direction)
-                        
+                    probabilities = np.array(probabilities) / np.sum(probabilities)
 
-                        # The step setp should not be the path the ant has taken
-                        if (self.maze.in_bounds(new_coordinate) and self.maze.walls[new_coordinate.x][new_coordinate.y] != 0 and (not new_coordinate in forbidden_zone)):
-                            forbidden_zone.append(new_coordinate)
-                            coordinate_current = new_coordinate
-                            antwalk.add(direction)
-                            break            
-                        else:  
-                            if(len(choices) == 0):
-                                direction = self.int_to_dir(Direction.reverse(Direction.dir_to_int(antwalk.remove_last())))
-                                coordinate_current = coordinate_current.add_direction(direction)                                 
-                    if(shortest_route.size() == 0):
-                        shortest_route = antwalk
-                    if(antwalk.shorter_than(shortest_route)):
-                        shortest_route = antwalk
+                    if(len(choices) > 0):
+                        step_choice_number = np.random.choice(choices, p=probabilities)
+                        step_direction = self.int_to_dir(step_choice_number)
+                        new_coordinate = coordinate_current.add_direction(step_direction)
 
-                    routes.append(antwalk)
-
+                        been_before.append(new_coordinate)
+                        coordinate_current = new_coordinate
+                        ant_route.add(step_direction)
+                    else: 
+                        previous_direction = ant_route.remove_last()
+                        coordinate_current = coordinate_current.subtract_direction(previous_direction)
+                if(shortest_route is None):
+                    shortest_route = ant_route
+                else:
+                    if(ant_route.shorter_than(shortest_route)):
+                        shortest_route = ant_route
+                routes.append(ant_route)
             self.maze.evaporate(self.evaporation)
             self.maze.add_pheromone_routes(routes, self.q)
-
-                        #     while(intWalk.size() != 4):
-                        #         new_int = np.random.randint(0, 4)
-                        #         if(not intWalk.contains(new_int)):
-
-                        # if(antwalk.size() > 0):
-                        #     antwalk.remove_last()
-                        # antwalk.add(new_direction.dir_to_coordinate_delta(direction))
-                    
-                    # antwalk.add(direction)
-                    #follow_route = start.add_coordinate(direction)
-            
-            
+        print(shortest_route)
         return shortest_route
 
-    def counting_walls(self, coordinate):
-        count = 0
-        for i in range(4):
-            check = self.int_to_dir(i)
-            new_coordinate = coordinate.add_direction(check)
-            if (not self.maze.in_bounds(new_coordinate) or self.maze.walls[new_coordinate.x][new_coordinate.y] == 0):
-                count += 1
 
-    # # antwalk: The currect coordinate of the ant 
-    # def nextStep(antwalk, intWalk):
-    #     direction = self.int_to_dir(int_direction[0])
-    #     new_coordinate = follow_route.add_direction(direction)
-
-    #     if (self.maze.in_bounds(new_coordinate) and self.maze.walls[new_coordinate.x][new_coordinate.y] != 0):
-    #         follow_route = new_coordinate
-    #         antwalk.add(direction)
-    #     else:
-    #         while(intWalk.size() != 4):
-    #             new_int = np.random.randint(0, 4)
-    #             if(not intWalk.contains(new_int)):
         
 
         # return None
@@ -155,8 +116,8 @@ if __name__ == "__main__":
     evap = 0.1
 
     #construct the optimization objects
-    maze = Maze.create_maze("../data/easy maze.txt")
-    spec = PathSpecification.read_coordinates("../data/easy coordinates.txt")
+    maze = Maze.create_maze("data\hard maze.txt")
+    spec = PathSpecification.read_coordinates("data\hard coordinates.txt")
     aco = AntColonyOptimization(maze, gen, no_gen, q, evap)
 
     #save starting time
@@ -170,7 +131,7 @@ if __name__ == "__main__":
 
     # print(shortest_route)
     #save solution!!!!!
-    shortest_route.write_to_file("../data/easy_solution.txt")
+    shortest_route.write_to_file("data\easy maze result.txt")
 
     #print route size
     print("Route size: " + str(shortest_route.size()))
