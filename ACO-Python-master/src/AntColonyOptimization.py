@@ -49,10 +49,9 @@ class AntColonyOptimization:
                 #Coordinates
                 forbidden_zone = []
                 forbidden_zone.append(coordinate_current)
-                
                 while(not coordinate_current.__eq__(coordinate_end)):
                     choices = [0,1,2,3]
-                    probabilities = maze.get_surrounding_pheromone(coordinate_current)
+                    probabilities = self.maze.get_surrounding_pheromone(coordinate_current)
                     pheromone_sum = sum(probabilities)
                     probabilities = np.array(probabilities) / pheromone_sum
                 #     if(self.counting_walls(follow_route) == 3):
@@ -64,24 +63,16 @@ class AntColonyOptimization:
                 #         forbidden_zone.append(follow_route.add_direction(self.int_to.dir(remember_last_spot)))
                     while(len(choices) > 0):
                         number = np.random.choice(choices, p=probabilities)
-                        print("**************")
-                        print(number)
-                        print(choices)
-                        print("Before " + str(probabilities))
                         probabilities = np.delete(probabilities, choices.index(number))
                         if(np.sum(probabilities) == 0):
-                            print("choice and antwalk")
-                            print(choice)
-                            print(antwalk)
                             choices.clear()
                         else:
                             probabilities = probabilities / np.sum(probabilities)
                             choices.remove(number)
-                        print("After " + str(probabilities))
-                        print("****************")
 
                         direction = self.int_to_dir(number)
                         new_coordinate = coordinate_current.add_direction(direction)
+                        
 
                         # The step setp should not be the path the ant has taken
                         if (self.maze.in_bounds(new_coordinate) and self.maze.walls[new_coordinate.x][new_coordinate.y] != 0 and (not new_coordinate in forbidden_zone)):
@@ -91,15 +82,17 @@ class AntColonyOptimization:
                             break            
                         else:  
                             if(len(choices) == 0):
-                                antwalk.remove_last() 
-                    
+                                direction = self.int_to_dir(Direction.reverse(Direction.dir_to_int(antwalk.remove_last())))
+                                coordinate_current = coordinate_current.add_direction(direction)                                 
+                    if(shortest_route.size() == 0):
+                        shortest_route = antwalk
                     if(antwalk.shorter_than(shortest_route)):
                         shortest_route = antwalk
-                        
 
-                routes.append(antwalk)
-                maze.evaporate(self.evaporation)
-                maze.add_pheromone_routes(routes)
+                    routes.append(antwalk)
+
+            self.maze.evaporate(self.evaporation)
+            self.maze.add_pheromone_routes(routes, self.q)
 
                         #     while(intWalk.size() != 4):
                         #         new_int = np.random.randint(0, 4)
@@ -154,6 +147,7 @@ class AntColonyOptimization:
         return self.evaporation
 # Driver function for Assignment 1
 if __name__ == "__main__":
+    print("is this being used????")
     #parameters
     gen = 1
     no_gen = 1
@@ -161,9 +155,8 @@ if __name__ == "__main__":
     evap = 0.1
 
     #construct the optimization objects
-    maze = Maze.create_maze("./data/easy maze.txt")
-    # print(maze)
-    spec = PathSpecification.read_coordinates("./data/easy coordinates.txt")
+    maze = Maze.create_maze("../data/easy maze.txt")
+    spec = PathSpecification.read_coordinates("../data/easy coordinates.txt")
     aco = AntColonyOptimization(maze, gen, no_gen, q, evap)
 
     #save starting time
@@ -177,7 +170,7 @@ if __name__ == "__main__":
 
     # print(shortest_route)
     #save solution!!!!!
-    shortest_route.write_to_file("./data/easy_solution.txt")
+    shortest_route.write_to_file("../data/easy_solution.txt")
 
     #print route size
     print("Route size: " + str(shortest_route.size()))

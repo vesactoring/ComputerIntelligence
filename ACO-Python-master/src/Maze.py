@@ -26,7 +26,7 @@ class Maze:
 
     # Initialize pheromones to a start value.
     def initialize_pheromones(self):
-        return self.walls.copy()
+        return np.array(self.walls.copy())
 
     # Reset the maze for a new shortest path problem.
     def reset(self):
@@ -54,7 +54,7 @@ class Maze:
     # Evaporate pheromone
     # @param rho evaporation factor
     def evaporate(self, rho):
-       self.pheromones = self.pheromones * (1-rho)
+        self.pheromones = (1-rho) * self.pheromones
 
     # Width getter
     # @return width of the maze
