@@ -55,14 +55,14 @@ class AntColonyOptimization:
 if __name__ == "__main__":
     print("is this being used????")
     #parameters
-    gen = 1
-    no_gen = 1
+    gen = 4
+    no_gen = 10
     q = 1600
-    evap = 0.1
+    evap = 0.2
 
     #construct the optimization objects
-    maze = Maze.create_maze("data\medium maze.txt")
-    spec = PathSpecification.read_coordinates("data\medium coordinates.txt")
+    maze = Maze.create_maze("data\insane maze.txt")
+    spec = PathSpecification.read_coordinates("data\insane coordinates.txt")
     aco = AntColonyOptimization(maze, gen, no_gen, q, evap)
 
     #save starting time
@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
     # print(shortest_route)
     #save solution!!!!!
-    shortest_route.write_to_file("data\easy maze result.txt")
+    shortest_route.write_to_file("data\insane maze result.txt")
 
     #print route size
     print("Route size: " + str(shortest_route.size()))

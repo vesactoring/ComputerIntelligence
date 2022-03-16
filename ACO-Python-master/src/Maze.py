@@ -79,7 +79,7 @@ class Maze:
         north_pheromone = self.get_pheromone(position.add_direction(Direction.north))
         east_pheromone = self.get_pheromone(position.add_direction(Direction.east))
         south_pheromone = self.get_pheromone(position.add_direction(Direction.south))
-        west_pheromone = self.get_pheromone(position.add_direction(Direction.east))
+        west_pheromone = self.get_pheromone(position.add_direction(Direction.west))
         return SurroundingPheromone(north_pheromone, east_pheromone, south_pheromone, west_pheromone)
 
     # Pheromone getter for a specific position. If the position is not in bounds returns 0
