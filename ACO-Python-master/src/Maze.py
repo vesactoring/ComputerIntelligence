@@ -44,11 +44,14 @@ class Maze:
         # Get the start of the route
         start = route.get_start()
         # Get the amount of pheromones distributed over the route the ant has walked on
-        amount = q / route.size()
+        amount = q
+        if(route.size() > 0):
+            amount = q / route.size()
         # For every coordinate in the maze that the ant has walked past, add some pheromone
         for i in range(len(path)):
             coordinate = start.add_direction(path[i])
-            self.pheromones[coordinate.x][coordinate.y] = amount + self.get_pheromone(coordinate)
+            if(self.in_bounds(coordinate)):
+                self.pheromones[coordinate.x][coordinate.y] = amount + self.get_pheromone(coordinate)
 
      # Update pheromones for a list of routes
      # @param routes A list of routes

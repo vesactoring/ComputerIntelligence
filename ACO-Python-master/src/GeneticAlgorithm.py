@@ -37,7 +37,7 @@ if __name__ == "__main__":
     #parameters
     population_size = 20
     generations = 20
-    persistFile = "./../tmp/productMatrixDist"
+    persistFile = "data\productMatrixDist"
         
     #setup optimization
     tsp_data = TSPData.read_from_file(persistFile)
@@ -45,4 +45,4 @@ if __name__ == "__main__":
 
     #run optimzation and write to file
     solution = ga.solve_tsp(tsp_data)
-    tsp_data.write_action_file(solution, "./../data/TSP solution.txt")
+    tsp_data.write_action_file(solution, "data/tsp solution.txt")

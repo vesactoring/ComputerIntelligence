@@ -192,15 +192,14 @@ if __name__ == "__main__":
     no_gen = 1
     q = 1000
     evap = 0.1
-    persist_file = "./../tmp/productMatrixDist"
-    tsp_path = "./../data/tsp products.txt"
-    coordinates = "./../data/hard coordinates.txt"
+    persist_file = "data\productMatrixDist"
+    tsp_path = "data/tsp products.txt"
+    coordinates = "data\hard coordinates.txt"
         
     #construct optimization
-    maze = Maze.create_maze("./../data/hard maze.txt")
+    maze = Maze.create_maze("data\hard maze.txt")
     pd = TSPData.read_specification(coordinates, tsp_path)
     aco = AntColonyOptimization(maze, gen, no_gen, q, evap)
-        
     #run optimization and write to file
     pd.calculate_routes(aco)
     pd.write_to_file(persist_file)
