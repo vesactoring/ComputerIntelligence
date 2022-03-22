@@ -114,8 +114,8 @@ class GeneticAlgorithm:
 # We will do this for y amount of generations and return the shortest route found by then.
 if __name__ == "__main__":
     #parameters
-    population_size = 20
-    generations = 40
+    population_size = 80
+    generations = 2000
     persistFile = "data\productMatrixDist"
         
     #setup optimization
