@@ -53,7 +53,7 @@ class AntColonyOptimization:
 
 # Driver function for Assignment 1
 # Here we create a AntColonyOptimization object and use the find_shortest_route function.
-# The function uses an Ant obcject goes through every maze for each generation.
+# The function uses an Ant object goes through every maze for each generation.
 # The Ant finds a route through find_route which makes use of the class SurroundingPheromone to get the pheromone
 # from the maze. With the pheromones the ant now can pick a route that he will take.
 # After going through all ants and generations the shortest route will return and then be written to a file
@@ -81,7 +81,7 @@ if __name__ == "__main__":
 
     # print(shortest_route)
     #save solution!!!!!
-    shortest_route.write_to_file("data\hard maze result.txt")
+    shortest_route.write_to_file("data\write here.txt")
 
     #print route size
     print("Route size: " + str(shortest_route.size()))

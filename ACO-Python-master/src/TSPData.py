@@ -197,6 +197,7 @@ if __name__ == "__main__":
     coordinates = "data\hard coordinates.txt"
         
     #construct optimization
+    #Make sure maze has to align with tsp product specifications
     maze = Maze.create_maze("data\hard maze.txt")
     pd = TSPData.read_specification(coordinates, tsp_path)
     aco = AntColonyOptimization(maze, gen, no_gen, q, evap)

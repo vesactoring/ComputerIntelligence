@@ -42,10 +42,10 @@ class GeneticAlgorithm:
         for i in range(self.generations):
             population = self.select(population, p_cross, p_mutate, tsp_data)
         population = sorted(population, key = lambda chromosome: self.fitness(chromosome, tsp_data))
-        print("FIRST: ", self.fitness(population[0], tsp_data))
-        print("SECOND: ", self.fitness(population[1], tsp_data))
-        print("LAST: ", self.fitness(population[17], tsp_data))
-        print("LENGTH: ", len(population))
+        # print("FIRST: ", self.fitness(population[0], tsp_data))
+        # print("SECOND: ", self.fitness(population[1], tsp_data))
+        # print("LAST: ", self.fitness(population[17], tsp_data))
+        # print("LENGTH: ", len(population))
         return population[0]
 
 
@@ -82,8 +82,6 @@ class GeneticAlgorithm:
         else:
             return chromosome1, chromosome2
         
-        
-        
     
     def select(self, population, p_cross_over, p_mutation, tsp_data):
         offSprings = []
@@ -107,10 +105,17 @@ class GeneticAlgorithm:
         return offSprings
 
 # Assignment 2.b
+# The Genetic algorithm will take a population size and amount of generations as parameters.
+# After creating the productMatrixdist file in TSPData, which contains all distances from a product to another product + all distances from start of maze to products + all distances from end of maze to products.
+# We will use this file also as a parameter to find the near-optimal solution of the shortest path for getting all the products (by referencing to it).
+# We will start with population size x amount of random routes,
+# Calculate the fitness of each of these random routes, 
+# Keep 2 of the shortest routes and then crossover x-2 childroutes with possible mutated childroutes.
+# We will do this for y amount of generations and return the shortest route found by then.
 if __name__ == "__main__":
     #parameters
-    population_size = 60
-    generations = 800
+    population_size = 20
+    generations = 40
     persistFile = "data\productMatrixDist"
         
     #setup optimization
@@ -118,18 +123,6 @@ if __name__ == "__main__":
     # print(tsp_data.get_end_distances())
     ga = GeneticAlgorithm(generations, population_size)
 
-    #run optimzation and write to file
+    #run optimization and write to file
     solution = ga.solve_tsp(tsp_data)
-    print(solution)
-    print(ga.fitness(solution, tsp_data))
     tsp_data.write_action_file(solution, "data/tsp solution.txt")
-    list = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16, 17]
-    population = []
-    for i in range(population_size):
-        population.append(shuffle(list))
-    # print(population)
-    # pairs = random.choices(population = population, weights = reversed([ga.fitness(parent, tsp_data) for parent in population]), k = 2)
-    # print("REVERSED: ", [ga.fitness(pairs[0], tsp_data), ga.fitness(pairs[1], tsp_data)])
-    # print("NOT REVERSED: ", [ga.fitness(parent, tsp_data) for parent in population])
-    # print(ga.fitness(population[1], tsp_data))
-    # print(ga.crossover(population[1], population[2], 0.7))
