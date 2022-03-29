@@ -4,7 +4,7 @@ from main.Agent import Agent
 from main.mysolution.MyQLearning import MyQLearning
 from main.mysolution.MyEGreedy import MyEGreedy
 
-def run(maze, robot, selection, learn, max_steps, alpha, epsilon, gamma):
+def run(maze, robot, selection, learn, max_steps, alpha, epsilon, gamma, decay= None):
     # keep learning until you decide to stop
     trials = 0
     total_number_of_steps_before_reset = 0
@@ -14,6 +14,8 @@ def run(maze, robot, selection, learn, max_steps, alpha, epsilon, gamma):
             trials += 1
             print(total_number_of_steps_before_reset)
             total_number_of_steps_before_reset = 0
+            # Q11
+            # epsilon = (1-decay) * epsilon
             robot.reset()
         else:
             action = selection.get_egreedy_action(robot, maze, learn, epsilon)
@@ -53,6 +55,8 @@ if __name__ == "__main__":
 
     # Set the reward at the bottom right to 10
     maze.set_reward(maze.get_state(9, 9), 10)
+    # Set second reward/goal
+    # maze.set_reward(maze.get_state(9, 0), 5)
 
     # create a robot at starting and reset location (0,0) (top left)
     robot = Agent(0, 0)
@@ -67,11 +71,12 @@ if __name__ == "__main__":
     # trialalphaalpha
     total_steps_before_reset = 0
     max_steps = 30000
-    trials = 
-    epsilon = 0.5
+    trials = 0
+    epsilon = 1
     alpha = 0.1
     gamma = 0.7
     stop = False
+    decay = 0.1
     
     run(maze , robot, selection, learn, max_steps, alpha, epsilon, gamma)
 
