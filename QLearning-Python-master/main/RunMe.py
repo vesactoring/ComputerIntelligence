@@ -76,7 +76,7 @@ if __name__ == "__main__":
     total_steps_before_reset = 0
     max_steps = 30000
     trials = 0
-    epsilon = 1
+    epsilon = 0.01
     alpha = 0.1
     gamma = 0.7
     stop = False

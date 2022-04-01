@@ -1,4 +1,5 @@
 import numpy as np
+import sys as sys
 from Action import Action
 class MyEGreedy:
 
@@ -13,14 +14,19 @@ class MyEGreedy:
 
     def get_best_action(self, agent, maze, q_learning):
         # TODO to select the best possible action currently known in State s.
-        max = 0
         actions = maze.get_valid_actions(agent)
-        action = None
-        for i in actions:
-            if max < q_learning.get_q(agent.get_state(maze), i):
-                max = q_learning.get_q(agent.get_state(maze), i)
-                action = i
-        return action
+        action_values = q_learning.get_action_values(agent.get_state(maze), actions)
+        best_act_val = 0
+        best_indexes_arr = []
+        for i in range(len(action_values)):
+            if(action_values[i] > best_act_val):
+                best_indexes_arr = []
+                best_act_val = action_values[i]
+                best_indexes_arr.append(i)
+            elif(action_values[i] == best_act_val):
+                best_indexes_arr.append(i)
+        random_best_action = np.random.randint(len(best_indexes_arr))
+        return actions[best_indexes_arr[random_best_action]]
 
     def get_egreedy_action(self, agent, maze, q_learning, epsilon):
         # TODO to select between random or best action selection based on epsilon.
