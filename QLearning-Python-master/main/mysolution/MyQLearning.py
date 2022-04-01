@@ -1,4 +1,4 @@
-from main.QLearning import QLearning
+from QLearning import QLearning
 
 
 class MyQLearning(QLearning):

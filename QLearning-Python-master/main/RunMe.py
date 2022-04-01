@@ -1,18 +1,21 @@
-from sympy import false
-from main.Maze import Maze
-from main.Agent import Agent
-from main.mysolution.MyQLearning import MyQLearning
-from main.mysolution.MyEGreedy import MyEGreedy
+
+# import os, sys
+# sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+from Maze import Maze
+from Agent import Agent
+from mysolution.MyQLearning import MyQLearning
+from mysolution.MyEGreedy import MyEGreedy
 
 def run(maze, robot, selection, learn, max_steps, alpha, epsilon, gamma, decay= None):
     # keep learning until you decide to stop
     trials = 0
     total_number_of_steps_before_reset = 0
     number_of_steps = 0
+    sum_of_trial_steps = 0
     while (number_of_steps < 30000):
-        if (maze.get_reward(robot.get_stage(maze) == 10)):
+        if (maze.get_reward(robot.get_state(maze)) > 0):
             trials += 1
-            print(total_number_of_steps_before_reset)
+            sum_of_trial_steps += total_number_of_steps_before_reset
             total_number_of_steps_before_reset = 0
             # Q11
             # epsilon = (1-decay) * epsilon
@@ -28,7 +31,8 @@ def run(maze, robot, selection, learn, max_steps, alpha, epsilon, gamma, decay= 
             # new_q = learn.update_q(state, action, reward, next_state, maze.get_valid_actions(robot), alpha, gamma)
             
             # learn.set_q(state, action, new_q)
-            rewards_current_episode += reward
+    print("trials: ", trials)
+    print("avg steps: ", sum_of_trial_steps / trials)
 
 
 
@@ -50,7 +54,7 @@ def run(maze, robot, selection, learn, max_steps, alpha, epsilon, gamma, decay= 
 if __name__ == "__main__":
     # load the maze
     # TODO replace this with the location to your maze on your file system
-    file = ".\data\toy_maze.txt"
+    file = "../data/toy_maze.txt"
     maze = Maze(file)
 
     # Set the reward at the bottom right to 10

@@ -24,7 +24,7 @@ class Agent:
         return self.get_state(maze)
 
     def reset(self):
-        print(self.nr_of_actions_since_reset)
+        # print(self.nr_of_actions_since_reset)
         self.x = self.start_x
         self.y = self.start_y
         self.nr_of_actions_since_reset = 0

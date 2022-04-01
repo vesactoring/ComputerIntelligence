@@ -1,5 +1,5 @@
 import numpy as np
-from main.Action import Action
+from Action import Action
 class MyEGreedy:
 
     def __init__(self):
@@ -28,4 +28,3 @@ class MyEGreedy:
             return self.get_random_action(agent, maze)
         return self.get_best_action(agent, maze, q_learning)
 
-print("fsdfklsjn")
